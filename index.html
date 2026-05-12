@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hassan Aftab — AI Agent Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#080B10;
+--surface:#0E1219;
+--surface2:#141921;
+--border:#1E2530;
+--accent:#00E5A0;
+--accent2:#0066FF;
+--text:#F0F4FF;
+--muted:#8892A4;
+--card:#111820;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;line-height:1.6;overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1.2rem 2rem;display:flex;justify-content:space-between;align-items:center;background:rgba(8,11,16,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--accent);letter-spacing:-0.5px}
+.nav-links{display:flex;gap:2rem}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:0.85rem;font-weight:500;letter-spacing:0.5px;text-transform:uppercase;transition:color 0.2s}
+.nav-links a:hover{color:var(--accent)}
+.nav-cta{background:var(--accent);color:#000;padding:0.5rem 1.2rem;border-radius:6px;text-decoration:none;font-size:0.85rem;font-weight:700;font-family:'Syne',sans-serif;transition:opacity 0.2s}
+.nav-cta:hover{opacity:0.85}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;padding:8rem 2rem 4rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-200px;right:-100px;width:600px;height:600px;background:radial-gradient(circle,rgba(0,229,160,0.06) 0%,transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-100px;left:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(0,102,255,0.05) 0%,transparent 70%);pointer-events:none}
+.hero-inner{max-width:1100px;margin:0 auto;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.hero-tag{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(0,229,160,0.08);border:1px solid rgba(0,229,160,0.2);color:var(--accent);padding:0.35rem 0.9rem;border-radius:50px;font-size:0.75rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:1.5rem;font-family:'DM Mono',monospace}
+.hero-tag span{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
+h1{font-family:'Syne',sans-serif;font-size:clamp(2.5rem,5vw,4rem);font-weight:800;line-height:1.05;letter-spacing:-2px;margin-bottom:1.5rem}
+h1 .accent{color:var(--accent)}
+h1 .dim{color:var(--muted)}
+.hero-desc{color:var(--muted);font-size:1rem;line-height:1.8;margin-bottom:2rem;max-width:480px}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap}
+.btn-primary{background:var(--accent);color:#000;padding:0.8rem 1.8rem;border-radius:8px;text-decoration:none;font-weight:700;font-family:'Syne',sans-serif;font-size:0.9rem;transition:all 0.2s;display:inline-flex;align-items:center;gap:0.5rem}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,229,160,0.25)}
+.btn-secondary{border:1px solid var(--border);color:var(--text);padding:0.8rem 1.8rem;border-radius:8px;text-decoration:none;font-weight:500;font-size:0.9rem;transition:all 0.2s;display:inline-flex;align-items:center;gap:0.5rem}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+
+/* HERO VISUAL */
+.hero-visual{position:relative}
+.terminal{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;font-family:'DM Mono',monospace;font-size:0.82rem}
+.terminal-header{background:var(--surface2);padding:0.75rem 1rem;display:flex;align-items:center;gap:0.5rem;border-bottom:1px solid var(--border)}
+.dot{width:10px;height:10px;border-radius:50%}
+.dot.r{background:#FF5F57}
+.dot.y{background:#FEBC2E}
+.dot.g{background:#28C840}
+.terminal-title{color:var(--muted);font-size:0.75rem;margin-left:auto;margin-right:auto}
+.terminal-body{padding:1.2rem}
+.line{margin:0.2rem 0;line-height:1.7}
+.line .prompt{color:var(--accent)}
+.line .cmd{color:var(--text)}
+.line .out{color:var(--muted)}
+.line .success{color:#28C840}
+.line .num{color:#FEBC2E}
+.line .str{color:#FF7B7B}
+.line .comment{color:#4A5568}
+.blink{animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* STATS */
+.stats{padding:3rem 2rem;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.stats-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:2rem}
+.stat{text-align:center}
+.stat-num{font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;color:var(--accent);line-height:1}
+.stat-label{color:var(--muted);font-size:0.8rem;text-transform:uppercase;letter-spacing:1px;margin-top:0.4rem}
+
+/* SECTIONS */
+section{padding:5rem 2rem}
+.section-inner{max-width:1100px;margin:0 auto}
+.section-tag{font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:0.8rem}
+.section-title{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,3vw,2.5rem);font-weight:800;letter-spacing:-1px;margin-bottom:1rem}
+.section-subtitle{color:var(--muted);max-width:500px;line-height:1.8}
+
+/* PROJECTS */
+.projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;margin-top:3rem}
+.project-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;transition:all 0.3s;position:relative;overflow:hidden}
+.project-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));transform:scaleX(0);transition:transform 0.3s;transform-origin:left}
+.project-card:hover::before{transform:scaleX(1)}
+.project-card:hover{border-color:rgba(0,229,160,0.2);transform:translateY(-4px)}
+.project-badge{display:inline-block;background:rgba(0,229,160,0.1);color:var(--accent);padding:0.25rem 0.7rem;border-radius:4px;font-size:0.72rem;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;font-family:'DM Mono',monospace;margin-bottom:1rem}
+.project-title{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:0.6rem}
+.project-desc{color:var(--muted);font-size:0.88rem;line-height:1.7;margin-bottom:1.2rem}
+.project-tags{display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1.2rem}
+.tag{background:var(--surface2);border:1px solid var(--border);color:var(--muted);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.72rem;font-family:'DM Mono',monospace}
+.project-link{color:var(--accent);text-decoration:none;font-size:0.82rem;font-weight:600;display:inline-flex;align-items:center;gap:0.3rem;transition:gap 0.2s}
+.project-link:hover{gap:0.6rem}
+.project-metrics{display:flex;gap:1.5rem;margin-bottom:1rem;padding:0.8rem;background:var(--surface);border-radius:8px}
+.metric{text-align:center}
+.metric-val{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--text)}
+.metric-label{font-size:0.68rem;color:var(--muted);font-family:'DM Mono',monospace}
+
+/* SKILLS */
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;margin-top:3rem}
+.skill-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem}
+.skill-icon{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:1rem}
+.skill-icon.green{background:rgba(0,229,160,0.1)}
+.skill-icon.blue{background:rgba(0,102,255,0.1)}
+.skill-icon.orange{background:rgba(255,123,123,0.1)}
+.skill-icon.purple{background:rgba(147,51,234,0.1)}
+.skill-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:0.8rem}
+.skill-items{display:flex;flex-wrap:wrap;gap:0.4rem}
+.skill-item{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:0.2rem 0.6rem;border-radius:4px;font-size:0.72rem;font-family:'DM Mono',monospace}
+
+/* EXPERIENCE */
+.exp-list{margin-top:3rem;display:flex;flex-direction:column;gap:1.5rem}
+.exp-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;display:grid;grid-template-columns:auto 1fr;gap:1.5rem;align-items:start}
+.exp-dot{width:12px;height:12px;border-radius:50%;background:var(--accent);margin-top:0.4rem;flex-shrink:0;box-shadow:0 0 0 4px rgba(0,229,160,0.1)}
+.exp-period{font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);margin-bottom:0.4rem}
+.exp-role{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:0.3rem}
+.exp-company{color:var(--accent);font-size:0.85rem;font-weight:500;margin-bottom:0.8rem}
+.exp-points{list-style:none;display:flex;flex-direction:column;gap:0.4rem}
+.exp-points li{color:var(--muted);font-size:0.85rem;padding-left:1rem;position:relative}
+.exp-points li::before{content:'→';position:absolute;left:0;color:var(--accent);font-size:0.75rem}
+
+/* CONTACT */
+.contact-section{background:var(--surface);border-top:1px solid var(--border)}
+.contact-inner{max-width:1100px;margin:0 auto;padding:5rem 2rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.contact-links{display:flex;flex-direction:column;gap:1rem;margin-top:2rem}
+.contact-link{display:flex;align-items:center;gap:1rem;color:var(--muted);text-decoration:none;padding:1rem;border:1px solid var(--border);border-radius:8px;transition:all 0.2s;background:var(--card)}
+.contact-link:hover{border-color:var(--accent);color:var(--text)}
+.contact-link-icon{width:36px;height:36px;border-radius:6px;background:rgba(0,229,160,0.1);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.contact-link-text{font-size:0.88rem}
+.contact-link-label{font-size:0.72rem;color:var(--muted);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:0.5px}
+
+/* FOOTER */
+footer{padding:2rem;border-top:1px solid var(--border);text-align:center;color:var(--muted);font-size:0.8rem;font-family:'DM Mono',monospace}
+
+/* ANIMATIONS */
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+
+@media(max-width:768px){
+.hero-inner{grid-template-columns:1fr;gap:3rem}
+.hero-visual{display:none}
+.stats-inner{grid-template-columns:repeat(2,1fr)}
+.contact-inner{grid-template-columns:1fr}
+.nav-links{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">hassan.aftab</div>
+  <div class="nav-links">
+    <a href="#projects">Projects</a>
+    <a href="#skills">Skills</a>
+    <a href="#experience">Experience</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <a href="mailto:hassankhan.2007.26@gmail.com" class="nav-cta">Hire Me →</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-tag"><span></span> Available for Remote Work</div>
+      <h1>AI Agent<br><span class="accent">Developer</span> &<br><span class="dim">Automation</span><br>Specialist</h1>
+      <p class="hero-desc">Building production-grade AI agents with OpenClaw, MCP architecture, and WhatsApp automation. From MCP servers to multi-agent pipelines — I ship real systems that work.</p>
+      <div class="hero-btns">
+        <a href="#projects" class="btn-primary">View Projects →</a>
+        <a href="https://www.linkedin.com/in/hassan-khan-6bb842262/" target="_blank" class="btn-secondary">LinkedIn ↗</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="terminal">
+        <div class="terminal-header">
+          <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+          <div class="terminal-title">tutorclaw_mcp / server.py</div>
+        </div>
+        <div class="terminal-body">
+          <div class="line"><span class="comment"># TutorClaw MCP Server — Production</span></div>
+          <div class="line"><span class="prompt">$</span> <span class="cmd">uv run python -m tutorclaw_mcp</span></div>
+          <div class="line"><span class="success">✓</span> <span class="out">MCP server started on stdio</span></div>
+          <div class="line"><span class="success">✓</span> <span class="out">10 tools registered</span></div>
+          <div class="line"><span class="success">✓</span> <span class="out">Stripe webhooks active</span></div>
+          <div class="line"><span class="success">✓</span> <span class="out">WhatsApp channel bound</span></div>
+          <div class="line">&nbsp;</div>
+          <div class="line"><span class="prompt">$</span> <span class="cmd">uv run pytest -v</span></div>
+          <div class="line"><span class="out">collected <span class="num">91</span> items</span></div>
+          <div class="line"><span class="success">PASSED</span> <span class="out">test_register_learner</span></div>
+          <div class="line"><span class="success">PASSED</span> <span class="out">test_stripe_payment_flow</span></div>
+          <div class="line"><span class="success">PASSED</span> <span class="out">test_tier_gating</span></div>
+          <div class="line"><span class="success">PASSED</span> <span class="out">test_hardening_suite</span></div>
+          <div class="line"><span class="out">━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span></div>
+          <div class="line"><span class="success">91 passed</span> <span class="out">in 34.52s</span></div>
+          <div class="line">&nbsp;</div>
+          <div class="line"><span class="prompt">$</span> <span class="cmd">clawhub publish tutorclaw-shim<span class="blink">_</span></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="stats-inner">
+    <div class="stat fade-in">
+      <div class="stat-num">10+</div>
+      <div class="stat-label">MCP Tools Built</div>
+    </div>
+    <div class="stat fade-in">
+      <div class="stat-num">91</div>
+      <div class="stat-label">Tests Passing</div>
+    </div>
+    <div class="stat fade-in">
+      <div class="stat-num">5+</div>
+      <div class="stat-label">AI Platforms</div>
+    </div>
+    <div class="stat fade-in">
+      <div class="stat-num">2+</div>
+      <div class="stat-label">Years Experience</div>
+    </div>
+  </div>
+</div>
+
+<section id="projects">
+  <div class="section-inner">
+    <div class="section-tag">// Featured Projects</div>
+    <h2 class="section-title">Production-Grade<br>AI Systems</h2>
+    <p class="section-subtitle">Real apps. Real code. Real results. Not demos — deployed systems built with proper architecture.</p>
+
+    <div class="projects-grid">
+
+      <div class="project-card fade-in">
+        <div class="project-badge">🚀 Live on ClawHub</div>
+        <div class="project-title">TutorClaw — AI Tutoring Platform</div>
+        <div class="project-metrics">
+          <div class="metric"><div class="metric-val">10</div><div class="metric-label">MCP Tools</div></div>
+          <div class="metric"><div class="metric-val">91</div><div class="metric-label">Tests</div></div>
+          <div class="metric"><div class="metric-val">2</div><div class="metric-label">Tiers</div></div>
+        </div>
+        <p class="project-desc">Full production MCP server built on OpenClaw. PRIMM-Lite teaching methodology, Stripe payment integration with free/paid tier gating, WhatsApp delivery, and comprehensive test suite.</p>
+        <div class="project-tags">
+          <span class="tag">OpenClaw</span>
+          <span class="tag">Python</span>
+          <span class="tag">FastMCP</span>
+          <span class="tag">Stripe</span>
+          <span class="tag">WhatsApp</span>
+          <span class="tag">pytest</span>
+        </div>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap">
+          <a href="https://clawhub.ai/tiktokmanagerhere889-coder/tutorclaw-shim" target="_blank" class="project-link">ClawHub ↗</a>
+          <a href="#contact" class="project-link" onclick="smoothTo('contact')">Hire for Similar →</a>
+        </div>
+      </div>
+
+      <div class="project-card fade-in" id="proj-jay">
+        <div class="project-badge">🤖 Multi-Agent</div>
+        <div class="project-title">Jay — Personal AI Employee</div>
+        <div class="project-metrics">
+          <div class="metric"><div class="metric-val">24/7</div><div class="metric-label">Runtime</div></div>
+          <div class="metric"><div class="metric-val">9+</div><div class="metric-label">Plugins</div></div>
+          <div class="metric"><div class="metric-val">3</div><div class="metric-label">Agents</div></div>
+        </div>
+        <p class="project-desc">Full OpenClaw deployment with custom agents, WhatsApp channel routing, MCP server integration, Vapi voice assistant, heartbeat monitoring, and memory system.</p>
+        <div class="project-tags">
+          <span class="tag">OpenClaw</span>
+          <span class="tag">Vapi</span>
+          <span class="tag">n8n</span>
+          <span class="tag">WhatsApp</span>
+          <span class="tag">Claude API</span>
+        </div>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap">
+          <a href="https://www.linkedin.com/in/hassan-khan-6bb842262/" target="_blank" class="project-link">LinkedIn ↗</a>
+          <a href="#contact" class="project-link">Get Quote →</a>
+        </div>
+      </div>
+
+      <div class="project-card fade-in" id="proj-realestate">
+        <div class="project-badge">🏠 Real Estate</div>
+        <div class="project-title">Lead Qualification AI Pipeline</div>
+        <div class="project-metrics">
+          <div class="metric"><div class="metric-val">Auto</div><div class="metric-label">Qualify</div></div>
+          <div class="metric"><div class="metric-val">CRM</div><div class="metric-label">Sync</div></div>
+          <div class="metric"><div class="metric-val">24/7</div><div class="metric-label">Active</div></div>
+        </div>
+        <p class="project-desc">Multi-agent pipeline for real estate clients. WhatsApp Business API integration for automated lead responses, GHL CRM sync, and N8N workflow orchestration.</p>
+        <div class="project-tags">
+          <span class="tag">N8N</span>
+          <span class="tag">GHL</span>
+          <span class="tag">WhatsApp API</span>
+          <span class="tag">CRM</span>
+          <span class="tag">Zapier</span>
+        </div>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap">
+          <a href="#experience" class="project-link">View Experience →</a>
+          <a href="#contact" class="project-link">Request Demo →</a>
+        </div>
+      </div>
+
+      <div class="project-card fade-in" id="proj-ecom">
+        <div class="project-badge">🛒 E-Commerce</div>
+        <div class="project-title">Shopify & Amazon Automation</div>
+        <div class="project-metrics">
+          <div class="metric"><div class="metric-val">2</div><div class="metric-label">Platforms</div></div>
+          <div class="metric"><div class="metric-val">Auto</div><div class="metric-label">Sync</div></div>
+          <div class="metric"><div class="metric-val">AI</div><div class="metric-label">Powered</div></div>
+        </div>
+        <p class="project-desc">N8N workflows connecting Shopify and Amazon Seller Central. Automated inventory sync, order processing, email campaigns, and data reporting via Google Sheets.</p>
+        <div class="project-tags">
+          <span class="tag">N8N</span>
+          <span class="tag">Shopify</span>
+          <span class="tag">Amazon</span>
+          <span class="tag">Helium 10</span>
+          <span class="tag">Google Sheets</span>
+        </div>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap">
+          <a href="#skills" class="project-link">View Skills →</a>
+          <a href="#contact" class="project-link">Request Demo →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="skills" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="section-inner">
+    <div class="section-tag">// Tech Stack</div>
+    <h2 class="section-title">Tools I Build With</h2>
+    <p class="section-subtitle">Production-tested stack across AI agents, automation workflows, and API integrations.</p>
+
+    <div class="skills-grid">
+      <div class="skill-card fade-in">
+        <div class="skill-icon green">🤖</div>
+        <div class="skill-title">AI Agent Development</div>
+        <div class="skill-items">
+          <span class="skill-item">OpenClaw</span>
+          <span class="skill-item">FastMCP</span>
+          <span class="skill-item">Claude API</span>
+          <span class="skill-item">ChatGPT API</span>
+          <span class="skill-item">Gemini</span>
+          <span class="skill-item">Vapi</span>
+          <span class="skill-item">Multi-Agent</span>
+        </div>
+      </div>
+      <div class="skill-card fade-in">
+        <div class="skill-icon blue">⚡</div>
+        <div class="skill-title">Automation & Workflows</div>
+        <div class="skill-items">
+          <span class="skill-item">N8N</span>
+          <span class="skill-item">Zapier</span>
+          <span class="skill-item">Make</span>
+          <span class="skill-item">GHL</span>
+          <span class="skill-item">WhatsApp API</span>
+          <span class="skill-item">Webhooks</span>
+          <span class="skill-item">REST APIs</span>
+        </div>
+      </div>
+      <div class="skill-card fade-in">
+        <div class="skill-icon orange">🛠️</div>
+        <div class="skill-title">Development</div>
+        <div class="skill-items">
+          <span class="skill-item">Python</span>
+          <span class="skill-item">FastAPI</span>
+          <span class="skill-item">Stripe</span>
+          <span class="skill-item">pytest</span>
+          <span class="skill-item">Git</span>
+          <span class="skill-item">JSON</span>
+          <span class="skill-item">Markdown</span>
+        </div>
+      </div>
+      <div class="skill-card fade-in">
+        <div class="skill-icon purple">📊</div>
+        <div class="skill-title">Platforms & Analytics</div>
+        <div class="skill-items">
+          <span class="skill-item">Shopify</span>
+          <span class="skill-item">Amazon SC</span>
+          <span class="skill-item">Helium 10</span>
+          <span class="skill-item">Google Sheets</span>
+          <span class="skill-item">Data Studio</span>
+          <span class="skill-item">TikTok Ads</span>
+          <span class="skill-item">Facebook Ads</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="section-inner">
+    <div class="section-tag">// Work History</div>
+    <h2 class="section-title">Experience &<br>Education</h2>
+
+    <div class="exp-list">
+      <div class="exp-card fade-in">
+        <div class="exp-dot"></div>
+        <div>
+          <div class="exp-period">2025 – 2026</div>
+          <div class="exp-role">AI Agent Developer — TutorClaw</div>
+          <div class="exp-company">Personal Project (Production)</div>
+          <ul class="exp-points">
+            <li>Built complete MCP server with 10 tools using Python + FastMCP</li>
+            <li>Stripe payment integration — free/paid tier gating with webhook handling</li>
+            <li>Deployed via OpenClaw with WhatsApp group channel routing</li>
+            <li>91 automated tests — input validation, hardening, e2e coverage</li>
+            <li>Published TutorClaw Shim skill on ClawHub marketplace</li>
+          </ul>
+        </div>
+      </div>
+      <div class="exp-card fade-in">
+        <div class="exp-dot"></div>
+        <div>
+          <div class="exp-period">2024 – 2025</div>
+          <div class="exp-role">AI Automation Specialist</div>
+          <div class="exp-company">Freelance — Real Estate Clients</div>
+          <ul class="exp-points">
+            <li>Multi-agent lead qualification pipelines for real estate agencies</li>
+            <li>WhatsApp Business API integration for 24/7 automated responses</li>
+            <li>N8N + GHL + CRM workflow automation systems</li>
+            <li>Shopify & Amazon Seller Central data sync automation</li>
+          </ul>
+        </div>
+      </div>
+      <div class="exp-card fade-in">
+        <div class="exp-dot"></div>
+        <div>
+          <div class="exp-period">2024 – Present</div>
+          <div class="exp-role">Agentic AI Developer</div>
+          <div class="exp-company">PIAIC — Pakistan Institute of AI & Computing</div>
+          <ul class="exp-points">
+            <li>6+ months specialized training in agentic AI systems</li>
+            <li>OpenClaw, MCP architecture, multi-agent pipelines</li>
+            <li>Production deployment and system design</li>
+          </ul>
+        </div>
+      </div>
+      <div class="exp-card fade-in">
+        <div class="exp-dot"></div>
+        <div>
+          <div class="exp-period">2019 – 2024</div>
+          <div class="exp-role">Bachelor's in Computer Science</div>
+          <div class="exp-company">University of Sindh</div>
+          <ul class="exp-points">
+            <li>Computer Science fundamentals, programming, databases</li>
+            <li>Software engineering principles and system design</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="contact-section" id="contact">
+  <div class="contact-inner">
+    <div>
+      <div class="section-tag">// Get In Touch</div>
+      <h2 class="section-title">Let's Build<br>Something Real</h2>
+      <p style="color:var(--muted);line-height:1.8;margin-top:1rem">Available for remote contract work. I build AI agents, MCP servers, and automation systems that actually work in production — not just demos.</p>
+    </div>
+    <div>
+      <div class="contact-links">
+        <a href="mailto:hassankhan.2007.26@gmail.com" class="contact-link">
+          <div class="contact-link-icon">📧</div>
+          <div>
+            <div class="contact-link-label">Email</div>
+            <div class="contact-link-text">hassankhan.2007.26@gmail.com</div>
+          </div>
+        </a>
+        <a href="https://www.linkedin.com/in/hassan-khan-6bb842262/" target="_blank" class="contact-link">
+          <div class="contact-link-icon">💼</div>
+          <div>
+            <div class="contact-link-label">LinkedIn</div>
+            <div class="contact-link-text">Hassan Khan — AI Agent Developer</div>
+          </div>
+        </a>
+        <a href="https://wa.me/923150264513" target="_blank" class="contact-link">
+          <div class="contact-link-icon">💬</div>
+          <div>
+            <div class="contact-link-label">WhatsApp</div>
+            <div class="contact-link-text">+92 315 026 4513</div>
+          </div>
+        </a>
+        <a href="https://clawhub.ai/tiktokmanagerhere889-coder/tutorclaw-shim" target="_blank" class="contact-link">
+          <div class="contact-link-icon">🦞</div>
+          <div>
+            <div class="contact-link-label">ClawHub</div>
+            <div class="contact-link-text">TutorClaw Shim — Live Skill</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>hassan aftab — ai agent developer & automation specialist — pakistan 🇵🇰</p>
+</footer>
+
+<script>
+function smoothTo(id){
+  const el=document.getElementById(id);
+  if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}
+}
+
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',function(e){
+    const id=this.getAttribute('href').replace('#','');
+    const el=document.getElementById(id);
+    if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth',block:'start'});}
+  });
+});
+
+const obs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('visible');}
+  });
+},{threshold:0.1});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+
+const navLinks=document.querySelectorAll('.nav-links a');
+const sections=document.querySelectorAll('section[id], div[id="contact"]');
+window.addEventListener('scroll',()=>{
+  let current='';
+  sections.forEach(s=>{
+    if(window.scrollY>=s.offsetTop-120){current=s.id;}
+  });
+  navLinks.forEach(a=>{
+    a.style.color=a.getAttribute('href')==='#'+current?'var(--accent)':'var(--muted)';
+  });
+});
+</script>
+</body>
+</html>
